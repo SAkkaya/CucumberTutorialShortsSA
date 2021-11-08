@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>CucumberTutorialShortsSA</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+    </properties>
+
+<!-- cucumber-java,cucumber-junit and cucumber-picocontainer has to be same version-->
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>6.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-picocontainer</artifactId>
+            <version>6.5.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>3.141.59</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>4.4.3</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <threadCount>4</threadCount>  <!-- 4 Treads -> how many feature file to run in parallel  (number if runner class ile ayni olmali)-->
+                    <perCoreThreadCount>false</perCoreThreadCount>  <!-- bunu yazmazsak CPU da as many as much thread kosturur -->
+                    <!--<parallel>methods</parallel> <!-feature filelari kosturmasini istiyorsak parallel -> methods -->
+                    <parallel>classes</parallel>   <!--Runner class lar-->
+                    <includes>
+                        <include>**/*Runner*.java</include>    <!-- *Runner*  any Runner classse -->
+                    </includes>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.masterthought</groupId>
+                <artifactId>maven-cucumber-reporting</artifactId>
+                <version>5.0.0</version>
+                <executions>
+                    <execution>
+                        <id>execution</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <projectName>cucumber-jvm-example</projectName>
+                            <!-- optional, per documentation set this to "true" to bypass generation of Cucumber Reports entirely, defaults to false if not specified -->
+                            <skip>false</skip>
+                            <!-- output directory for the generated report -->
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <!-- optional, defaults to outputDirectory if not specified -->
+                            <inputDirectory>${project.build.directory}</inputDirectory>
+                            <jsonFiles>
+                                <!-- supports wildcard or name pattern -->
+                                <param>**/cucumber*.json</param>
+                            </jsonFiles>
+<!--
+                            <!- optional, set true to group features by its Ids -->
+                            <mergeFeaturesById>false</mergeFeaturesById>
+                            <!-- optional, set true to get a final report with latest results of the same test from different test runs -->
+                            <mergeFeaturesWithRetest>false</mergeFeaturesWithRetest>
+                            <!-- optional, set true to fail build on test failures -->
+                            <checkBuildResult>false</checkBuildResult>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+<!--    &lt;!&ndash; https://github.com/damianszczepanik/maven-cucumber-reporting&ndash;&gt;-->
+
+<!--    &lt;!&ndash; I have 2 plugings at the bottom&ndash;&gt;-->
+<!--    &lt;!&ndash; 1st plugin finds CukesRunner file and execute this file, when you trigger Maven verify  **/*CukesRunner.java (stars means look anywhere, anyfolder for Cukesrunner &ndash;&gt;-->
+<!--    <build>-->
+<!--        <plugins>-->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-surefire-plugin</artifactId>-->
+<!--                <version>2.22.2</version>-->
+<!--                <configuration>-->
+<!--                    <testFailureIgnore>true</testFailureIgnore>-->
+<!--                    <runOrder>Alphabetical</runOrder>    &lt;!&ndash;run with alphabetical order so first CukesRuner then FailedTestRunner will run&ndash;&gt;-->
+<!--                    <includes>-->
+<!--                        <include>**/*CukesRunner.java</include>-->
+<!--                        <include>**/*FailedTestRunner.java</include>-->
+<!--                    </includes>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+<!--            &lt;!&ndash; 2nd pluging responsible for create a report, pluging takes all information of this report from json file-->
+<!--            that we made cucumber to create that file by changing the settings on CukesRunner file  by adding ==> plugin = {"json:target/cucumber.json"}  &ndash;&gt;-->
+
+
+<!--            <plugin>-->
+<!--                <groupId>net.masterthought</groupId>-->
+<!--                <artifactId>maven-cucumber-reporting</artifactId>-->
+<!--                <version>5.0.0</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>execution</id>     &lt;!&ndash; this lines creates your report) &ndash;&gt;-->
+<!--                        <phase>verify</phase>     &lt;!&ndash; only execute if it verify phase then generate report) &ndash;&gt;-->
+<!--                        <goals>-->
+<!--                            <goal>generate</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <projectName>Cucumber HTML Reports</projectName>-->
+<!--                            <outputDirectory>${project.build.directory}</outputDirectory>-->
+<!--                            <inputDirectory>${project.build.directory}</inputDirectory>-->
+<!--                            <jsonFiles>-->
+<!--                                <param>**/cucumber*.json</param>          &lt;!&ndash; this lines reads the json file ( to create your report) &ndash;&gt;-->
+<!--                            </jsonFiles>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+<!--        </plugins>-->
+<!--    </build>-->
+
+
